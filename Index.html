@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portfolio</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <!-- Lucide icons via CDN -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+</head>
+<body>
+
+  <!-- ===== LOADING SCREEN ===== -->
+  <div id="loader" class="loader" aria-hidden="true">
+    <div class="loader__inner">
+      <div class="loader__ring"></div>
+      <div class="loader__ring loader__ring--delay"></div>
+      <span class="loader__text">Loading</span>
+    </div>
+  </div>
+
+  <!-- ===== NAVIGATION ===== -->
+  <header class="nav" id="nav">
+    <div class="nav__brand">
+      <a href="#home" class="nav__logo" id="navLogo">Portfolio</a>
+    </div>
+
+    <!-- Desktop nav links -->
+    <nav class="nav__links" id="navLinks" aria-label="Main navigation">
+      <a href="#home"         class="nav__link" data-section="home">Home</a>
+      <a href="#about"        class="nav__link" data-section="about">About</a>
+      <a href="#skills"       class="nav__link" data-section="skills">Skills</a>
+      <a href="#projects"     class="nav__link" data-section="projects">Projects</a>
+      <a href="#education"    class="nav__link" data-section="education">Education</a>
+      <a href="#experience"   class="nav__link" data-section="experience">Experience</a>
+      <a href="#certificates" class="nav__link" data-section="certificates">Certificates</a>
+      <a href="#contact"      class="nav__link" data-section="contact">Contact</a>
+    </nav>
+
+    <div class="nav__actions">
+      <!-- Theme toggle -->
+      <button class="btn-icon" id="themeToggle" aria-label="Toggle dark/light mode" title="Toggle theme">
+        <i data-lucide="moon" class="icon icon--moon"></i>
+        <i data-lucide="sun"  class="icon icon--sun" style="display:none"></i>
+      </button>
+      <!-- Mobile hamburger -->
+      <button class="btn-icon nav__burger" id="navBurger" aria-label="Open menu" aria-expanded="false">
+        <i data-lucide="menu"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile drawer -->
+  <div class="nav__drawer" id="navDrawer" aria-hidden="true">
+    <div class="nav__drawer-inner">
+      <button class="btn-icon nav__drawer-close" id="navDrawerClose" aria-label="Close menu">
+        <i data-lucide="x"></i>
+      </button>
+      <nav class="nav__drawer-links" aria-label="Mobile navigation">
+        <a href="#home"         class="nav__drawer-link" data-section="home">Home</a>
+        <a href="#about"        class="nav__drawer-link" data-section="about">About</a>
+        <a href="#skills"       class="nav__drawer-link" data-section="skills">Skills</a>
+        <a href="#projects"     class="nav__drawer-link" data-section="projects">Projects</a>
+        <a href="#education"    class="nav__drawer-link" data-section="education">Education</a>
+        <a href="#experience"   class="nav__drawer-link" data-section="experience">Experience</a>
+        <a href="#certificates" class="nav__drawer-link" data-section="certificates">Certificates</a>
+        <a href="#contact"      class="nav__drawer-link" data-section="contact">Contact</a>
+      </nav>
+    </div>
+  </div>
+  <div class="nav__overlay" id="navOverlay"></div>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <main>
+
+    <!-- HOME SECTION -->
+    <section id="home" class="section section--home">
+      <div class="home__bg-grid" aria-hidden="true"></div>
+      <div class="container home__container">
+        <div class="home__avatar-wrap">
+          <img id="homeAvatar" class="home__avatar" src="assets/images/placeholder-avatar.svg" alt="Profile photo" />
+          <div class="home__avatar-ring" aria-hidden="true"></div>
+        </div>
+        <div class="home__text">
+          <p class="home__eyebrow">Hello, I'm</p>
+          <h1 class="home__name" id="homeName">Add your name</h1>
+          <p class="home__title" id="homeTitle">Add your title</p>
+          <p class="home__bio"   id="homeBio">Add your bio here.</p>
+          <div class="home__cta">
+            <a href="#contact" class="btn btn--primary">Get in touch</a>
+            <a href="#" class="btn btn--ghost" id="homeResume" target="_blank" rel="noopener">Download CV</a>
+          </div>
+          <div class="home__social" id="homeSocial"></div>
+        </div>
+      </div>
+      <a href="#about" class="home__scroll-hint" aria-label="Scroll to About">
+        <i data-lucide="chevrons-down"></i>
+      </a>
+    </section>
+
+    <!-- ABOUT SECTION -->
+    <section id="about" class="section">
+      <div class="container">
+        <h2 class="section__title">About <span class="accent">Me</span></h2>
+        <div class="about__grid">
+          <div class="about__img-wrap">
+            <img id="aboutAvatar" class="about__img" src="assets/images/placeholder-avatar.svg" alt="About photo" />
+          </div>
+          <div class="about__content">
+            <p class="about__bio" id="aboutBio">Add your bio here. Tell the world who you are and what you do.</p>
+            <ul class="about__info">
+              <li><span class="about__label">Name</span>     <span id="aboutName">—</span></li>
+              <li><span class="about__label">Email</span>    <span id="aboutEmail">—</span></li>
+              <li><span class="about__label">Phone</span>    <span id="aboutPhone">—</span></li>
+              <li><span class="about__label">Location</span> <span id="aboutLocation">—</span></li>
+            </ul>
+            <a href="#" class="btn btn--primary" id="aboutResume" target="_blank" rel="noopener">Download Resume</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SKILLS SECTION -->
+    <section id="skills" class="section section--alt">
+      <div class="container">
+        <h2 class="section__title">My <span class="accent">Skills</span></h2>
+        <div class="skills__grid" id="skillsGrid">
+          <p class="empty-state">Add your skills</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROJECTS SECTION -->
+    <section id="projects" class="section">
+      <div class="container">
+        <h2 class="section__title">My <span class="accent">Projects</span></h2>
+        <div class="search-bar">
+          <i data-lucide="search" class="search-bar__icon"></i>
+          <input type="search" id="projectSearch" class="search-bar__input" placeholder="Search projects…" aria-label="Search projects" />
+        </div>
+        <div class="projects__grid" id="projectsGrid">
+          <p class="empty-state">Add your projects</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- EDUCATION SECTION -->
+    <section id="education" class="section section--alt">
+      <div class="container">
+        <h2 class="section__title">My <span class="accent">Education</span></h2>
+        <div class="timeline" id="educationTimeline">
+          <p class="empty-state">Add your education</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- EXPERIENCE SECTION -->
+    <section id="experience" class="section">
+      <div class="container">
+        <h2 class="section__title">Work <span class="accent">Experience</span></h2>
+        <div class="timeline" id="experienceTimeline">
+          <p class="empty-state">Add your experience</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CERTIFICATES SECTION -->
+    <section id="certificates" class="section section--alt">
+      <div class="container">
+        <h2 class="section__title">My <span class="accent">Certificates</span></h2>
+        <div class="search-bar">
+          <i data-lucide="search" class="search-bar__icon"></i>
+          <input type="search" id="certSearch" class="search-bar__input" placeholder="Search certificates…" aria-label="Search certificates" />
+        </div>
+        <div class="certs__grid" id="certsGrid">
+          <p class="empty-state">Add your certificates</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT SECTION -->
+    <section id="contact" class="section">
+      <div class="container">
+        <h2 class="section__title">Get In <span class="accent">Touch</span></h2>
+        <div class="contact__grid">
+          <!-- Info column -->
+          <div class="contact__info">
+            <p class="contact__intro">Have a project in mind or just want to chat? Fill out the form and I'll get back to you.</p>
+            <ul class="contact__details">
+              <li>
+                <i data-lucide="mail"></i>
+                <span id="contactEmail">your@email.com</span>
+              </li>
+              <li>
+                <i data-lucide="phone"></i>
+                <span id="contactPhone">+1 234 567 8900</span>
+              </li>
+              <li>
+                <i data-lucide="map-pin"></i>
+                <span id="contactLocation">Your City, Country</span>
+              </li>
+            </ul>
+            <div class="contact__social" id="contactSocial"></div>
+          </div>
+
+          <!-- Contact form -->
+          <form class="contact__form" id="contactForm" novalidate>
+            <div class="form-group">
+              <label for="cfName">Name</label>
+              <input type="text" id="cfName" name="name" placeholder="Your full name" required />
+              <span class="form-error" id="cfNameErr"></span>
+            </div>
+            <div class="form-group">
+              <label for="cfEmail">Email</label>
+              <input type="email" id="cfEmail" name="email" placeholder="your@email.com" required />
+              <span class="form-error" id="cfEmailErr"></span>
+            </div>
+            <div class="form-group">
+              <label for="cfMsg">Message</label>
+              <textarea id="cfMsg" name="message" rows="5" placeholder="Tell me about your project…" required></textarea>
+              <span class="form-error" id="cfMsgErr"></span>
+            </div>
+            <button type="submit" class="btn btn--primary btn--full">
+              <i data-lucide="send"></i> Send Message
+            </button>
+            <p class="form-success" id="cfSuccess" aria-live="polite"></p>
+          </form>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="container footer__inner">
+      <p class="footer__copy">© <span id="footerYear"></span> <span id="footerName">Portfolio</span>. All rights reserved.</p>
+      <div class="footer__social" id="footerSocial"></div>
+      <a href="admin.html" class="footer__admin-link">Admin</a>
+    </div>
+  </footer>
+
+  <!-- ===== PROJECT MODAL ===== -->
+  <div class="modal" id="projectModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal__backdrop" id="modalBackdrop"></div>
+    <div class="modal__box">
+      <button class="modal__close btn-icon" id="modalClose" aria-label="Close modal">
+        <i data-lucide="x"></i>
+      </button>
+      <!-- Slideshow -->
+      <div class="modal__slideshow" id="modalSlideshow">
+        <div class="modal__slides" id="modalSlides"></div>
+        <button class="modal__slide-btn modal__slide-btn--prev" id="slidePrev" aria-label="Previous image">
+          <i data-lucide="chevron-left"></i>
+        </button>
+        <button class="modal__slide-btn modal__slide-btn--next" id="slideNext" aria-label="Next image">
+          <i data-lucide="chevron-right"></i>
+        </button>
+        <div class="modal__dots" id="modalDots"></div>
+      </div>
+      <div class="modal__content">
+        <h3 class="modal__title" id="modalTitle"></h3>
+        <p class="modal__desc"  id="modalDesc"></p>
+        <div class="modal__tags" id="modalTags"></div>
+        <div class="modal__links">
+          <a href="#" class="btn btn--primary btn--sm" id="modalGithub" target="_blank" rel="noopener">
+            <i data-lucide="github"></i> GitHub
+          </a>
+          <a href="#" class="btn btn--ghost btn--sm" id="modalLive" target="_blank" rel="noopener">
+            <i data-lucide="external-link"></i> Live Demo
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast" role="alert" aria-live="polite"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
