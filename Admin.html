@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — Portfolio</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="admin.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+<body class="admin-body">
+
+  <!-- ===== LOADING ===== -->
+  <div id="loader" class="loader" aria-hidden="true">
+    <div class="loader__inner">
+      <div class="loader__ring"></div>
+      <div class="loader__ring loader__ring--delay"></div>
+      <span class="loader__text">Loading</span>
+    </div>
+  </div>
+
+  <!-- ===== AUTH SCREEN (Login + 2FA) ===== -->
+  <div id="authScreen" class="auth-screen" style="display:none">
+
+    <!-- LOGIN STEP -->
+    <div id="loginStep" class="auth-card">
+      <div class="auth-card__logo">
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+      </div>
+      <h1 class="auth-card__title">Admin Login</h1>
+      <p class="auth-card__sub">Sign in to manage your portfolio</p>
+
+      <form id="loginForm" novalidate>
+        <div class="form-group">
+          <label for="loginEmail">Email</label>
+          <input type="email" id="loginEmail" placeholder="admin@example.com" required autocomplete="email" />
+          <span class="form-error" id="loginEmailErr"></span>
+        </div>
+        <div class="form-group">
+          <label for="loginPwd">Password</label>
+          <div class="input-pw-wrap">
+            <input type="password" id="loginPwd" placeholder="••••••••" required autocomplete="current-password" />
+            <button type="button" class="btn-icon input-pw-toggle" id="pwToggle" aria-label="Toggle password visibility">
+              <svg id="eyeOpen" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              <svg id="eyeClosed" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+            </button>
+          </div>
+          <span class="form-error" id="loginPwdErr"></span>
+        </div>
+        <button type="submit" class="btn btn--primary btn--full" id="loginBtn">
+          Sign In
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </button>
+        <p class="auth-card__hint">Demo: <code>admin@portfolio.com</code> / <code>Admin@123</code></p>
+      </form>
+    </div>
+
+    <!-- 2FA STEP -->
+    <div id="tfaStep" class="auth-card" style="display:none">
+      <div class="auth-card__logo auth-card__logo--info">
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <h1 class="auth-card__title">Two-Factor Auth</h1>
+      <p class="auth-card__sub" id="tfaMsg">A 6-digit code has been sent to your email. (Demo: <strong>123456</strong>)</p>
+
+      <form id="tfaForm" novalidate>
+        <div class="form-group">
+          <label for="tfaCode">Verification Code</label>
+          <input type="text" id="tfaCode" placeholder="123456" maxlength="6" inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code" required />
+          <span class="form-error" id="tfaCodeErr"></span>
+        </div>
+        <button type="submit" class="btn btn--primary btn--full">Verify &amp; Login</button>
+        <button type="button" class="btn btn--ghost btn--full" id="tfaBack" style="margin-top:.5rem">← Back</button>
+      </form>
+    </div>
+
+  </div>
+
+  <!-- ===== DASHBOARD (shown after auth) ===== -->
+  <div id="dashboard" style="display:none">
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar__brand">
+        <span class="sidebar__logo">⟁ Admin</span>
+        <button class="btn-icon sidebar__close" id="sidebarClose" aria-label="Close sidebar">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <nav class="sidebar__nav">
+        <button class="sidebar__link active" data-panel="panelOverview">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          Overview
+        </button>
+        <button class="sidebar__link" data-panel="panelProfile">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Profile / About
+        </button>
+        <button class="sidebar__link" data-panel="panelSkills">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          Skills
+        </button>
+        <button class="sidebar__link" data-panel="panelProjects">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+          Projects
+        </button>
+        <button class="sidebar__link" data-panel="panelEducation">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+          Education
+        </button>
+        <button class="sidebar__link" data-panel="panelExperience">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
+          Experience
+        </button>
+        <button class="sidebar__link" data-panel="panelCertificates">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+          Certificates
+        </button>
+        <button class="sidebar__link" data-panel="panelContact">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          Contact Info
+        </button>
+        <button class="sidebar__link" data-panel="panelSocial">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          Social Links
+        </button>
+        <button class="sidebar__link" data-panel="panelResume">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          Resume
+        </button>
+      </nav>
+      <div class="sidebar__footer">
+        <button class="btn btn--ghost btn--full" id="logoutBtn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Logout
+        </button>
+        <a href="index.html" class="btn btn--ghost btn--full" style="margin-top:.5rem">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          View Portfolio
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main area -->
+    <div class="admin-main" id="adminMain">
+
+      <!-- Top bar -->
+      <header class="admin-topbar">
+        <button class="btn-icon" id="sidebarToggle" aria-label="Toggle sidebar">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <h1 class="admin-topbar__title" id="topbarTitle">Overview</h1>
+        <div class="admin-topbar__right">
+          <button class="btn-icon" id="themeToggle" aria-label="Toggle theme">
+            <svg id="adminMoon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+            <svg id="adminSun" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          </button>
+          <span class="admin-topbar__user" id="topbarUser">Admin</span>
+        </div>
+      </header>
+
+      <!-- PANELS -->
+      <div class="admin-panels" id="adminPanels">
+
+        <!-- OVERVIEW -->
+        <section id="panelOverview" class="admin-panel active">
+          <div class="stats-grid" id="statsGrid"></div>
+          <div class="overview-tip">
+            <p>👋 Welcome to your portfolio admin. Use the sidebar to manage each section.</p>
+          </div>
+        </section>
+
+        <!-- PROFILE / ABOUT -->
+        <section id="panelProfile" class="admin-panel">
+          <div class="panel-header">
+            <h2>Profile &amp; About</h2>
+          </div>
+          <form id="profileForm" class="admin-form" novalidate>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="pName">Full Name</label>
+                <input type="text" id="pName" placeholder="Add your name" />
+              </div>
+              <div class="form-group">
+                <label for="pTitle">Professional Title</label>
+                <input type="text" id="pTitle" placeholder="e.g. Full Stack Developer" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="pBio">Bio / About</label>
+              <textarea id="pBio" rows="5" placeholder="Write about yourself…"></textarea>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="pEmail">Email</label>
+                <input type="email" id="pEmail" placeholder="your@email.com" />
+              </div>
+              <div class="form-group">
+                <label for="pPhone">Phone</label>
+                <input type="text" id="pPhone" placeholder="+1 234 567 8900" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="pLocation">Location</label>
+              <input type="text" id="pLocation" placeholder="City, Country" />
+            </div>
+            <div class="form-group">
+              <label>Profile Image</label>
+              <div class="img-upload-area" id="avatarUploadArea">
+                <img id="avatarPreview" class="img-upload-preview" src="assets/images/placeholder-avatar.svg" alt="Avatar preview" />
+                <div class="img-upload-controls">
+                  <label for="avatarInput" class="btn btn--ghost btn--sm">Upload Image</label>
+                  <input type="file" id="avatarInput" accept="image/*" style="display:none" />
+                  <button type="button" class="btn btn--danger btn--sm" id="avatarRemove">Remove</button>
+                  <p class="img-upload-hint">JPG, PNG or WebP. Max 2 MB.</p>
+                </div>
+              </div>
+            </div>
+            <button type="submit" class="btn btn--primary">Save Profile</button>
+          </form>
+        </section>
+
+        <!-- SKILLS -->
+        <section id="panelSkills" class="admin-panel">
+          <div class="panel-header">
+            <h2>Skills</h2>
+            <button class="btn btn--primary btn--sm" id="addSkillCatBtn">+ Add Category</button>
+          </div>
+          <div id="skillsList" class="admin-list"></div>
+
+          <!-- Skill Category Form Modal -->
+          <div class="inline-modal" id="skillModal" style="display:none">
+            <div class="inline-modal__box">
+              <h3 id="skillModalTitle">Add Skill Category</h3>
+              <form id="skillForm" novalidate>
+                <div class="form-group">
+                  <label for="skCategory">Category Name</label>
+                  <input type="text" id="skCategory" placeholder="e.g. Frontend" required />
+                  <span class="form-error" id="skCategoryErr"></span>
+                </div>
+                <div class="form-group">
+                  <label for="skItems">Skills (comma separated)</label>
+                  <input type="text" id="skItems" placeholder="HTML, CSS, JavaScript" required />
+                  <span class="form-error" id="skItemsErr"></span>
+                </div>
+                <input type="hidden" id="skEditIndex" value="" />
+                <div class="inline-modal__actions">
+                  <button type="submit" class="btn btn--primary btn--sm">Save</button>
+                  <button type="button" class="btn btn--ghost btn--sm" id="skillModalCancel">Cancel</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </section>
+
+        <!-- PROJECTS -->
+        <section id="panelProjects" class="admin-panel">
+          <div class="panel-header">
+            <h2>Projects</h2>
+            <button class="btn btn--primary btn--sm" id="addProjectBtn">+ Add Project</button>
+          </div>
+          <div id="projectsList" class="admin-list"></div>
+
+          <div class="inline-modal" id="projectModal2" style="display:none">
+            <div class="inline-modal__box inline-modal__box--wide">
+              <h3 id="projectModalTitle">Add Project</h3>
+              <form id="projectForm" novalidate>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="prjTitle">Title</label>
+                    <input type="text" id="prjTitle" placeholder="My Awesome Project" required />
+                    <span class="form-error" id="prjTitleErr"></span>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="prjDesc">Description</label>
+                  <textarea id="prjDesc" rows="3" placeholder="What does this project do?"></textarea>
+                </div>
+                <div class="form-group">
+                  <label for="prjTech">Technologies (comma separated)</label>
+                  <input type="text" id="prjTech" placeholder="React, Node.js, MongoDB" />
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="prjGithub">GitHub URL</label>
+                    <input type="url" id="prjGithub" placeholder="https://github.com/…" />
+                  </div>
+                  <div class="form-group">
+                    <label for="prjLive">Live Demo URL</label>
+                    <input type="url" id="prjLive" placeholder="https://myproject.com" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>Project Images</label>
+                  <label for="prjImages" class="btn btn--ghost btn--sm" style="display:inline-flex;cursor:pointer">Upload Images</label>
+                  <input type="file" id="prjImages" accept="image/*" multiple style="display:none" />
+                  <div id="prjImgPreviews" class="img-previews"></div>
+                </div>
+                <input type="hidden" id="prjEditIndex" value="" />
+                <div class="inline-modal__actions">
+                  <button type="submit" class="btn btn--primary btn--sm">Save Project</button>
+                  <button type="button" class="btn btn--ghost btn--sm" id="projectModalCancel">Cancel</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </section>
+
+        <!-- EDUCATION -->
+        <section id="panelEducation" class="admin-panel">
+          <div class="panel-header">
+            <h2>Education</h2>
+            <button class="btn btn--primary btn--sm" id="addEduBtn">+ Add</button>
+          </div>
+          <div id="educationList" class="admin-list"></div>
+          <div class="inline-modal" id="eduModal" style="display:none">
+            <div class="inline-modal__box">
+              <h3 id="eduModalTitle">Add Education</h3>
+              <form id="eduForm" novalidate>
+                <div class="form-group">
+                  <label for="eduDegree">Degree / Qualification</label>
+                  <input type="text" id="eduDegree" placeholder="B.Sc. Computer Science" required />
+                  <span class="form-error" id="eduDegreeErr"></span>
+                </div>
+                <div class="form-group">
+                  <label for="eduInst">Institution</label>
+                  <input type="text" id="eduInst" placeholder="University Name" required />
+                  <span class="form-error" id="eduInstErr"></span>
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="eduStart">Start Year</label>
+                    <input type="text" id="eduStart" placeholder="2018" />
+                  </div>
+                  <div class="form-group">
+                    <label for="eduEnd">End Year</label>
+                    <input type="text" id="eduEnd" placeholder="2022" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="eduDesc">Description</label>
+                  <textarea id="eduDesc" rows="2" placeholder="Relevant courses, achievements…"></textarea>
+                </div>
+                <input type="hidden" id="eduEditIndex" value="" />
+                <div class="inline-modal__actions">
+                  <button type="submit" class="btn btn--primary btn--sm">Save</button>
+                  <button type="button" class="btn btn--ghost btn--sm" id="eduModalCancel">Cancel</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </section>
+
+        <!-- EXPERIENCE -->
+        <section id="panelExperience" class="admin-panel">
+          <div class="panel-header">
+            <h2>Work Experience</h2>
+            <button class="btn btn--primary btn--sm" id="addExpBtn">+ Add</button>
+          </div>
+          <div id="experienceList" class="admin-list"></div>
+          <div class="inline-modal" id="expModal" style="display:none">
+            <div class="inline-modal__box">
+              <h3 id="expModalTitle">Add Experience</h3>
+              <form id="expForm" novalidate>
+                <div class="form-group">
+                  <label for="expRole">Role / Job Title</label>
+                  <input type="text" id="expRole" placeholder="Senior Developer" required />
+                  <span class="form-error" id="expRoleErr"></span>
+                </div>
+                <div class="form-group">
+                  <label for="expCompany">Company</label>
+                  <input type="text" id="expCompany" placeholder="Company Name" required />
+                  <span class="form-error" id="expCompanyErr"></span>
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="expStart">Start Date</label>
+                    <input type="text" id="expStart" placeholder="Jan 2021" />
+                  </div>
+                  <div class="form-group">
+                    <label for="expEnd">End Date</label>
+                    <input type="text" id="expEnd" placeholder="Present" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="expDesc">Description</label>
+                  <textarea id="expDesc" rows="3" placeholder="Key responsibilities and achievements…"></textarea>
+                </div>
+                <input type="hidden" id="expEditIndex" value="" />
+                <div class="inline-modal__actions">
+                  <button type="submit" class="btn btn--primary btn--sm">Save</button>
+                  <button type="button" class="btn btn--ghost btn--sm" id="expModalCancel">Cancel</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </section>
+
+        <!-- CERTIFICATES -->
+        <section id="panelCertificates" class="admin-panel">
+          <div class="panel-header">
+            <h2>Certificates</h2>
+            <button class="btn btn--primary btn--sm" id="addCertBtn">+ Add</button>
+          </div>
+          <div id="certsList" class="admin-list"></div>
+          <div class="inline-modal" id="certModal" style="display:none">
+            <div class="inline-modal__box">
+              <h3 id="certModalTitle">Add Certificate</h3>
+              <form id="certForm" novalidate>
+                <div class="form-group">
+                  <label for="certTitle">Certificate Title</label>
+                  <input type="text" id="certTitle" placeholder="AWS Certified Developer" required />
+                  <span class="form-error" id="certTitleErr"></span>
+                </div>
+                <div class="form-group">
+                  <label for="certIssuer">Issuing Organisation</label>
+                  <input type="text" id="certIssuer" placeholder="Amazon Web Services" required />
+                  <span class="form-error" id="certIssuerErr"></span>
+                </div>
+                <div class="form-group">
+                  <label for="certDate">Date</label>
+                  <input type="text" id="certDate" placeholder="March 2024" />
+                </div>
+                <div class="form-group">
+                  <label for="certLink">Certificate URL</label>
+                  <input type="url" id="certLink" placeholder="https://credential.example.com/…" />
+                </div>
+                <input type="hidden" id="certEditIndex" value="" />
+                <div class="inline-modal__actions">
+                  <button type="submit" class="btn btn--primary btn--sm">Save</button>
+                  <button type="button" class="btn btn--ghost btn--sm" id="certModalCancel">Cancel</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </section>
+
+        <!-- CONTACT INFO -->
+        <section id="panelContact" class="admin-panel">
+          <div class="panel-header"><h2>Contact Information</h2></div>
+          <form id="contactInfoForm" class="admin-form" novalidate>
+            <div class="form-group">
+              <label for="ciEmail">Public Email</label>
+              <input type="email" id="ciEmail" placeholder="your@email.com" />
+            </div>
+            <div class="form-group">
+              <label for="ciPhone">Phone</label>
+              <input type="text" id="ciPhone" placeholder="+1 234 567 8900" />
+            </div>
+            <div class="form-group">
+              <label for="ciLocation">Location</label>
+              <input type="text" id="ciLocation" placeholder="City, Country" />
+            </div>
+            <button type="submit" class="btn btn--primary">Save Contact Info</button>
+          </form>
+        </section>
+
+        <!-- SOCIAL LINKS -->
+        <section id="panelSocial" class="admin-panel">
+          <div class="panel-header"><h2>Social Media Links</h2></div>
+          <form id="socialForm" class="admin-form" novalidate>
+            <div class="form-group">
+              <label for="soGithub">GitHub URL</label>
+              <input type="url" id="soGithub" placeholder="https://github.com/username" />
+            </div>
+            <div class="form-group">
+              <label for="soLinkedin">LinkedIn URL</label>
+              <input type="url" id="soLinkedin" placeholder="https://linkedin.com/in/username" />
+            </div>
+            <div class="form-group">
+              <label for="soTwitter">X / Twitter URL</label>
+              <input type="url" id="soTwitter" placeholder="https://x.com/username" />
+            </div>
+            <div class="form-group">
+              <label for="soInstagram">Instagram URL</label>
+              <input type="url" id="soInstagram" placeholder="https://instagram.com/username" />
+            </div>
+            <div class="form-group">
+              <label for="soWebsite">Personal Website URL</label>
+              <input type="url" id="soWebsite" placeholder="https://yoursite.com" />
+            </div>
+            <button type="submit" class="btn btn--primary">Save Social Links</button>
+          </form>
+        </section>
+
+        <!-- RESUME -->
+        <section id="panelResume" class="admin-panel">
+          <div class="panel-header"><h2>Resume</h2></div>
+          <form id="resumeForm" class="admin-form" novalidate>
+            <div class="form-group">
+              <label for="resumeUrl">Resume URL (Google Drive, Dropbox, etc.)</label>
+              <input type="url" id="resumeUrl" placeholder="https://drive.google.com/…" />
+            </div>
+            <p style="color:var(--text-muted);font-size:.85rem;margin-top:-.5rem">
+              Paste a publicly accessible link to your resume PDF. This will appear on the portfolio's Home and About sections.
+            </p>
+            <button type="submit" class="btn btn--primary">Save Resume Link</button>
+          </form>
+        </section>
+
+      </div><!-- end admin-panels -->
+    </div><!-- end admin-main -->
+  </div><!-- end dashboard -->
+
+  <!-- Confirm Dialog -->
+  <div class="confirm-dialog" id="confirmDialog" style="display:none" role="alertdialog" aria-modal="true">
+    <div class="confirm-dialog__box">
+      <p class="confirm-dialog__msg" id="confirmMsg">Are you sure?</p>
+      <div class="confirm-dialog__actions">
+        <button class="btn btn--danger btn--sm" id="confirmYes">Delete</button>
+        <button class="btn btn--ghost btn--sm" id="confirmNo">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast" role="alert" aria-live="polite"></div>
+
+  <script src="admin.js"></script>
+</body>
+</html>
